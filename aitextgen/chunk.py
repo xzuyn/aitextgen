@@ -6,7 +6,7 @@ def token_chunk_split(
         add_extra_linebreak: bool = True,
         tokenizer_file: str = "./trained_model/tokenizer.json",
         config_file: str = "./trained_model/config.json",
-        FastTokenizer: bool = True,
+        fasttokenizer: bool = True,
 ):
     global rerechunked, tokenizer
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -25,11 +25,11 @@ def token_chunk_split(
 
     if trim is True:
         rerechunked = []
-        if FastTokenizer is True:
+        if fasttokenizer is True:
             from transformers import PreTrainedTokenizerFast
             tokenizer = PreTrainedTokenizerFast.from_pretrained(tokenizer_file,
                                                                 config=config_file)
-        elif FastTokenizer is False:
+        elif fasttokenizer is False:
             from transformers import PreTrainedTokenizer
             tokenizer = PreTrainedTokenizer.from_pretrained(tokenizer_file,
                                                                 config=config_file)
