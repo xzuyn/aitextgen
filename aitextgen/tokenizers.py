@@ -53,6 +53,7 @@ def train_tokenizer(
     )
 
     if serialize:
-        tokenizer.save(f"{prefix}.tokenizer.json")
+        tokenizer.save(f"tokenizer.json")
     else:
-        tokenizer.save_model(save_path, prefix)
+        tokenizer.save(f"./trained_model/tokenizer.json")
+        tokenizer.save_model(save_path)
