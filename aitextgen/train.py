@@ -13,6 +13,10 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks.progress.progress_bar import ProgressBar
 from pytorch_lightning.accelerators import TPUAccelerator
 
+import wandb
+from wandb import AlertLevel
+from datetime import timedelta
+
 
 class ATGTransformer(pl.LightningModule):
     """
@@ -112,7 +116,7 @@ class ATGProgressBar(ProgressBar):
         self.smoothing = smoothing
         self.run_id = run_id
         self.save_gdrive = save_gdrive
-        self.progress_bar_refresh_rate = progress_bar_refresh_rate
+        self.progress_bar_refresh_rate = 5
         self.train_transformers_only = train_transformers_only
         self.num_layers_freeze = num_layers_freeze
 
@@ -186,6 +190,24 @@ class ATGProgressBar(ProgressBar):
                 desc += f" — GPU Mem: {gpu_memory} MB"
             self.main_progress_bar.update(self.progress_bar_refresh_rate)
             self.main_progress_bar.set_description(desc)
+
+        # Log the loss using Weights & Biases (step 0)
+        if (self.steps % 5 == 0) or (self.steps == 1):
+            tokens_processed = 1024 * self.steps # TODO: replace 1024 with `max_length`
+            tokens_to_chinchilla = (29900000 * 20) - tokens_processed # TODO: replace 29900000 with
+            # models parameter count
+            tokens_to_llama = (29900000 * 40) - tokens_processed # TODO: replace 29900000 with
+            # models parameter count
+            wandb.log(
+                {
+                    "loss": current_loss,
+                    "avg_loss": avg_loss,
+                    "tokens_processed": tokens_processed,
+                    "tokens_to_chinchilla": tokens_to_chinchilla,
+                    "tokens_to_llama": tokens_to_llama,
+                },
+                step=self.steps
+            )
 
         if TPUAccelerator.is_available() and self.save_every_check:
             did_unfreeze = False
@@ -261,6 +283,17 @@ class ATGProgressBar(ProgressBar):
                     os.path.join(self.output_dir, pt_file),
                     os.path.join("/content/drive/MyDrive/", self.run_id, pt_file),
                 )
+        if not os.path.exists("Z:/aitextgen/trained_model/step.txt"):
+            with open("Z:/aitextgen/trained_model/step.txt", "w") as file:
+                file.write("0")
+        if os.path.exists("Z:/aitextgen/trained_model/step.txt"):
+            with open('Z:/aitextgen/trained_model/step.txt', 'r') as file:
+                stepped = int(file.read())
+            with open("Z:/aitextgen/trained_model/step.txt", "w") as file:
+                if stepped > 0:
+                    file.write(str(self.steps + stepped))
+                else:
+                    file.write(str(self.steps))
 
     def average_loss(self, current_loss, prev_avg_loss, smoothing):
         if prev_avg_loss is None:
