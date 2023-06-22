@@ -6,7 +6,7 @@ from math import floor
 import logging
 import wandb
 import os
-from chunk import token_chunk_split
+from aitextgen.chunk import token_chunk_split
 
 
 batch_size = 1  # high batch size gives worse training(?), but is used to speed up training time
@@ -21,7 +21,12 @@ n_head = 8  # default is 4
 line_by_line = False  # default is False
 learning_rate = 0.001  # default is 0.001
 dropout = 0.0  # default is 0.0
-split_string = "<|thread|>"
+split_string = "\n"
+trim = True
+fasttokenizer = True
+add_extra_linebreak = False
+tokenizer_file = "./trained_model/tokenizer.json"
+config_file = "./trained_model/config.json"
 
 # Trying to train a tokenizer with your <|endoftext|> token in the dataset
 # will cause it to break it into multiple tokens, while also being a special token.
@@ -31,7 +36,7 @@ split_string = "<|thread|>"
 # file_name_with_bos = Your dataset WITH <|endoftext|> tokens.
 # file_name_no_bos = Your dataset WITHOUT <|endoftext|> tokens.
 file_name_with_bos = "./trained_model/dataset/filtered_chunks.txt"
-file_name_no_bos = "./trained_model/dataset/filtered_chunks-nobos.txt" # TODO: automatically make this
+file_name_no_bos = "./trained_model/dataset/filtered_chunks-nobos.txt"  # TODO: automatically make this
 wandb_project_name = "Pol"
 wandb_run_name = "Pol-v2"  # Dial-EPOCH-1
 
@@ -74,12 +79,18 @@ def main():
     )
     t_list = token_chunk_split(
         file_name_with_bos,
+        trim=trim,
         trim_size=max_length,
-        split_string=split_string
+        split_string=split_string,
+        tokenizer_file=tokenizer_file,
+        config_file=config_file,
+        add_extra_linebreak=add_extra_linebreak,
+        FastTokenizer=FastTokenizer,
+
     )
     data = TokenDataset(
         texts=t_list,
-        tokenizer_file="./trained_model/tokenizer.json",
+        tokenizer_file=tokenizer_file,
         block_size=max_length,
         line_by_line=line_by_line,
         save_cache=False,
@@ -88,14 +99,14 @@ def main():
     if reload is True:
         ai = aitextgen(
             model_folder="./trained_model",
-            config="./trained_model/config.json",
-            tokenizer_file="./trained_model/tokenizer.json",
+            config=config_file,
+            tokenizer_file=tokenizer_file,
             vocab_file="./trained_model/vocab.json",
         )
     else:
         ai = aitextgen(
             config=config,
-            tokenizer_file="./trained_model/tokenizer.json",
+            tokenizer_file=tokenizer_file,
             vocab_file="./trained_model/vocab.json",
         )
 
