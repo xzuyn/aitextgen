@@ -10,7 +10,7 @@ from aitextgen.chunk import token_chunk_split
 
 
 batch_size = 1  # high batch size gives worse training(?), but is used to speed up training time
-max_length = 1024  # default is 64
+max_length = 32  # default is 64
 epochs = 4  # default is 1
 save_every = 1000  # default is 5000
 generate_every = 500  # default is 500
@@ -35,9 +35,10 @@ config_file = "./trained_model/config.json"
 #
 # file_name_with_bos = Your dataset WITH <|endoftext|> tokens.
 # file_name_no_bos = Your dataset WITHOUT <|endoftext|> tokens.
-file_name_with_bos = "./trained_model/dataset/filtered_chunks.txt"
-file_name_no_bos = "./trained_model/dataset/filtered_chunks-nobos.txt"  # TODO: automatically make this
-wandb_project_name = "Pol"
+file_name_with_bos = "./Datasets/Stable Diffusion Prompts (2.473 Million)/all_prompts_deduped_cleaned_with_bos.txt"
+file_name_no_bos = "./Datasets/Stable Diffusion Prompts (2.473 Million)/all_prompts_deduped_cleaned_no_bos.txt"  # TODO: automatically
+# make this
+wandb_project_name = "SD"
 wandb_run_name = "Pol-v2"  # Dial-EPOCH-1
 
 
@@ -85,7 +86,7 @@ def main():
         tokenizer_file=tokenizer_file,
         config_file=config_file,
         add_extra_linebreak=add_extra_linebreak,
-        FastTokenizer=FastTokenizer,
+        fasttokenizer=fasttokenizer,
 
     )
     data = TokenDataset(
