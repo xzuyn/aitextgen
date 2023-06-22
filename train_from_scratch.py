@@ -10,7 +10,7 @@ from aitextgen.chunk import token_chunk_split
 
 
 batch_size = 1  # high batch size gives worse training(?), but is used to speed up training time
-max_length = 32  # default is 64
+max_length = 1024  # default is 64
 epochs = 4  # default is 1
 save_every = 1000  # default is 5000
 generate_every = 500  # default is 500
@@ -21,10 +21,10 @@ n_head = 8  # default is 4
 line_by_line = False  # default is False
 learning_rate = 0.001  # default is 0.001
 dropout = 0.0  # default is 0.0
-split_string = "\n"
+split_string = "<|thread|>"
 trim = True
 fasttokenizer = True
-add_extra_linebreak = False
+add_extra_linebreak = True
 tokenizer_file = "./trained_model/tokenizer.json"
 config_file = "./trained_model/config.json"
 
@@ -35,11 +35,11 @@ config_file = "./trained_model/config.json"
 #
 # file_name_with_bos = Your dataset WITH <|endoftext|> tokens.
 # file_name_no_bos = Your dataset WITHOUT <|endoftext|> tokens.
-file_name_with_bos = "./Datasets/Stable Diffusion Prompts (2.473 Million)/all_prompts_deduped_cleaned_with_bos.txt"
-file_name_no_bos = "./Datasets/Stable Diffusion Prompts (2.473 Million)/all_prompts_deduped_cleaned_no_bos.txt"  # TODO: automatically
+file_name_with_bos = "./pol-700/3-processed/pol-new.txt"
+file_name_no_bos = "./pol-700/3-processed/pol-new-no-bos.txt"  # TODO: automatically
 # make this
-wandb_project_name = "SD"
-wandb_run_name = "Pol-v2"  # Dial-EPOCH-1
+wandb_project_name = "Pol"
+wandb_run_name = "Pol-v2.2"  # Dial-EPOCH-1
 
 
 # Your code needs to be wrapped inside a main function,
