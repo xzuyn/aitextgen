@@ -2,11 +2,14 @@ def token_chunk_split(
         file_path,
         trim: bool = True,
         trim_size: int = 1024,
-        split_string: str = "<|thread|>",
+        split_string: str = "\n",
+        keep_split_string: bool = True,
         add_extra_linebreak: bool = True,
         tokenizer_file: str = "./trained_model/tokenizer.json",
         config_file: str = "./trained_model/config.json",
         fasttokenizer: bool = True,
+        line_by_line_cust: bool = False,
+        prefix: str = None,
 ):
     global rerechunked, tokenizer
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -18,10 +21,10 @@ def token_chunk_split(
     rechunked = []
     if add_extra_linebreak is True:
         for chunks in message_chunks:
-            rechunked.append(f"{split_string}\n\n{chunks}")
+            rechunked.append(f"<|thread|>\n{chunks}")
     elif add_extra_linebreak is False:
         for chunks in message_chunks:
-            rechunked.append(f"{split_string}\n{chunks}")
+            rechunked.append(f"<|thread|>\n\n{chunks}")
 
     if trim is True:
         rerechunked = []
