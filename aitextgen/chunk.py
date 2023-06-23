@@ -3,8 +3,8 @@ def token_chunk_split(
         trim: bool = True,
         trim_size: int = 1024,
         split_string: str = "\n",
-        prefix: str = None,
-        suffix: str = None,
+        prefix: str = "",
+        suffix: str = "",
         keep_split_string: bool = True,
         breaks_before_chunk: str = "\n",
         tokenizer_file: str = "./trained_model/tokenizer.json",
@@ -73,5 +73,9 @@ def token_chunk_split(
             tokens = tokenizer.encode(i)
             if len(tokens) <= trim_size:
                 rerechunked.append(i)
+
+                ## Sanity check
+                print(i)
+                stop()
 
     return rerechunked
