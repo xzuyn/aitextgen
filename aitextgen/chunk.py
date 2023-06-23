@@ -14,39 +14,19 @@ def token_chunk_split(
         sanity_check: bool = False,
 ):
     """
-    file_path: your text file.
-
-    trim: tokenize your text chunks then only keeps chunks that are trim_size or smaller.
-
-    trim_size: should set this to your models `max_length`.
-
-    split_string: what is seperating your text chunks currently? if its one thing on each line
-    then using `\\n` will work. if you have something else like `<|thread|>` or `<|bos|>`, then use
-    those instead.
-
-    prefix: add a prefix to your message chunks (will be added before tokenizing).
-
-    suffix: add a suffix to your message chunks (will be added before tokenizing).
-
-    keep_split_string: when set to False your split string will be removed.
-
-    so its probably best to keep this set to True.
-
-    breaks_before_chunks: in between your `split_string` and text chunk you can add line breaks,
-    or really any text if you would like.
-
-    tokenizer_file: your models tokenizer file.
-
-    config_file: your models config file.
-
-    fasttokenizer: swap between using `PreTrainedTokenizerFast` & `PreTrainedTokenizer`
-
-    resume_step: set how many steps worth of data to remove from the beginning of your dataset
-    (this happens in memory. your original dataset file will stay the same).
-
-    sanity_check: will load the first item of your message chunks, and print it out.
-    this is so you can double check if you are sending the trainer the correct formatting.
-    triple check this.
+    :param file_path: your text file.
+    :param trim: tokenize your text chunks then only keeps chunks that are trim_size or smaller.
+    :param trim_size: should set this to your models `max_length`.
+    :param split_string: what is seperating your text chunks currently? if its one thing on each line then using `\\n` will work. if you have something else like `<|thread|>` or `<|bos|>`, then use those instead.
+    :param prefix: add a prefix to your message chunks (will be added before tokenizing).
+    :param suffix: add a suffix to your message chunks (will be added before tokenizing).
+    :param keep_split_string: when set to False your split string will be removed. so its probably best to keep this set to True.
+    :param breaks_before_chunks: in between your `split_string` and text chunk you can add line breaks, or really any text if you would like.
+    :param tokenizer_file: your models tokenizer file.
+    :param config_file: your models config file.
+    :param fasttokenizer: swap between using `PreTrainedTokenizerFast` & `PreTrainedTokenizer`
+    :param resume_step: set how many steps worth of data to remove from the beginning of your dataset (this happens in memory. your original dataset file will stay the same).
+    :param sanity_check: will load the first item of your message chunks, and print it out. this is so you can double check if you are sending the trainer the correct formatting. triple check this.
 
     The final output message chunks will be from these;
     {prefix}{split_string}{breaks_before_chunk}{chunks}{suffix}
