@@ -24,9 +24,11 @@ dropout = 0.0  # default is 0.0
 split_string = "<|thread|>"
 trim = True
 fasttokenizer = True
-add_extra_linebreak = True
+breaks_before_chunk = "\n"
 tokenizer_file = "./trained_model/tokenizer.json"
 config_file = "./trained_model/config.json"
+
+stepped = 0
 
 # Trying to train a tokenizer with your <|endoftext|> token in the dataset
 # will cause it to break it into multiple tokens, while also being a special token.
@@ -67,6 +69,15 @@ def main():
         print("reloading model")
         reload = True
 
+    if reload is True and os.path.exists("./trained_model/step.txt"):
+        with open('./trained_model/step.txt', 'r', encoding="utf-8") as file:
+            stepped = int(file.read())
+        if stepped > 0:
+            print(
+                f"Resuming Training. First {stepped} sets of the "
+                f"dataset skipped. First {stepped} steps skipped."
+            )
+
     config = GPT2ConfigCPU(
         vocab_size=vocab_size,
         max_length=max_length,
@@ -85,9 +96,9 @@ def main():
         split_string=split_string,
         tokenizer_file=tokenizer_file,
         config_file=config_file,
-        add_extra_linebreak=add_extra_linebreak,
+        breaks_before_chunk=breaks_before_chunk,
         fasttokenizer=fasttokenizer,
-
+        resume_step=stepped,
     )
     data = TokenDataset(
         texts=t_list,
@@ -117,19 +128,6 @@ def main():
     print(f"Epochs set to {epochs}, so num_steps set to {num_steps}.")
     print(f"1 epoch would be {floor((len(t_list) / batch_size))} steps.")
     print()
-
-    # TODO: make this remove beginning of training data to resume properly.
-    # if reload is True:
-    #     with open('trained_model/step.txt', 'r') as file:
-    #         stepped = int(file.read())
-    #     if stepped > 0:
-    #         print(
-    #             f"Resuming Training. First {stepped} of "
-    #             f"dataset skipped. First {num_steps} skipped."
-    #         )
-    #         print(type(data))
-    #         data = data[stepped:]
-    #         num_steps = num_steps - stepped
 
 
 
