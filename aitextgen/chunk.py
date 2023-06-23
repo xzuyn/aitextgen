@@ -40,10 +40,10 @@ def token_chunk_split(
 
     fasttokenizer: swap between using `PreTrainedTokenizerFast` & `PreTrainedTokenizer`
 
-    resume_step: set how many steps worth of data to remove from the beginning of your dataset 
+    resume_step: set how many steps worth of data to remove from the beginning of your dataset
     (this happens in memory. your original dataset file will stay the same).
-    
-    The final output message chunks will be from these; 
+
+    The final output message chunks will be from these;
     {prefix}{split_string}{breaks_before_chunk}{chunks}{suffix}
     """
     global rerechunked, tokenizer
