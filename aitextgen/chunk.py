@@ -59,8 +59,12 @@ def token_chunk_split(
     message_chunks = [chunk.strip() for chunk in chunks if chunk.strip()]
 
     rechunked = []
-    for chunks in message_chunks:
-        rechunked.append(f"{prefix}{split_string}{breaks_before_chunk}{chunks}{suffix}")
+    if keep_split_string is True:
+        for chunks in message_chunks:
+            rechunked.append(f"{prefix}{split_string}{breaks_before_chunk}{chunks}{suffix}")
+    elif keep_split_string is False:
+        for chunks in message_chunks:
+            rechunked.append(f"{prefix}{breaks_before_chunk}{chunks}{suffix}")
 
     rechunked = rechunked[resume_step:]
 
@@ -80,7 +84,9 @@ def token_chunk_split(
                 if len(tokens) <= trim_size:
                     rerechunked.append(i)
                     ## Sanity check
+                    print("--- YOUR INPUT DIRECTLY UNDER THIS ---")
                     print(i)
+                    print("--- YOUR INPUT DIRECTLY ABOVE THIS ---")
                     exit()
 
         elif sanity_check is False:
