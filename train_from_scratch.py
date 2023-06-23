@@ -1,19 +1,19 @@
+import os
+import wandb
+import logging
+from math import floor
+from aitextgen import aitextgen
+from aitextgen.utils import GPT2ConfigCPU
+from aitextgen.chunk import token_chunk_split
 from aitextgen.TokenDataset import TokenDataset
 from aitextgen.tokenizers import train_tokenizer
-from aitextgen.utils import GPT2ConfigCPU
-from aitextgen import aitextgen
-from math import floor
-import logging
-import wandb
-import os
-from aitextgen.chunk import token_chunk_split
 
 
 batch_size = 1  # high batch size gives worse training(?), but is used to speed up training time
 max_length = 1024  # default is 64
 epochs = 4  # default is 1
-save_every = 1000  # default is 5000
-generate_every = 500  # default is 500
+save_every = 250  # default is 5000
+generate_every = 10  # default is 500
 vocab_size = 8192  # default is (1024 * 1)
 n_embed = 512  # default is 128
 n_layer = 8  # default is 4
@@ -24,9 +24,12 @@ dropout = 0.0  # default is 0.0
 split_string = "<|thread|>"
 trim = True
 fasttokenizer = True
-breaks_before_chunk = "\n"
+breaks_before_chunk = "\n\n"
 tokenizer_file = "./trained_model/tokenizer.json"
 config_file = "./trained_model/config.json"
+
+# this will load the first chunk of your dataset so can can see if it's using the correct format
+sanity_check = True
 
 stepped = 0
 
@@ -48,7 +51,7 @@ wandb_run_name = "Pol-v2.2"  # Dial-EPOCH-1
 # as otherwise multiple child processes from pytorch_lightning cannot be spawned
 def main():
     # Setup logging
-    global reload
+    global reload, stepped
     logging.basicConfig(
         format="%(asctime)s — %(levelname)s — %(name)s — %(message)s",
         datefmt="%m/%d/%Y %H:%M:%S",
@@ -99,6 +102,7 @@ def main():
         breaks_before_chunk=breaks_before_chunk,
         fasttokenizer=fasttokenizer,
         resume_step=stepped,
+        sanity_check=sanity_check,
     )
     data = TokenDataset(
         texts=t_list,
@@ -129,8 +133,6 @@ def main():
     print(f"1 epoch would be {floor((len(t_list) / batch_size))} steps.")
     print()
 
-
-
     # Initialize Weights & Biases
     wandb.init(
         project=wandb_project_name,
@@ -160,7 +162,7 @@ def main():
     wandb.finish()
 
     # Generate text from it!
-    ai.generate(10, prompt="<|thread|>")
+    ai.generate(10, prompt=split_string)
 
 
 if __name__ == "__main__":
