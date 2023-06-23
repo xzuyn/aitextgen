@@ -76,6 +76,6 @@ def token_chunk_split(
 
                 ## Sanity check
                 print(i)
-                stop()
+                exit()
 
     return rerechunked
