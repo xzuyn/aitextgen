@@ -30,6 +30,7 @@ suffix = "<|endoftext|>"
 prefix = ""
 tokenizer_file = "./trained_model/tokenizer.json"
 config_file = "./trained_model/config.json"
+prompt = "USER: "
 
 # this will load the first chunk of your dataset so can can see if it's using the correct format
 # your model will not train with this enabled. it will not get saved either.
@@ -47,6 +48,7 @@ stepped = 0
 # file_name_with_bos = Your dataset WITH <|endoftext|> tokens.
 # file_name_no_bos = Your dataset WITHOUT <|endoftext|> tokens.
 file_name_with_bos = "./trained_model/dataset/combined_with_bos.txt"
+
 file_name_no_bos = "./trained_model/dataset/combined_no_bos.txt"  # TODO: make this automatic
 wandb_project_name = "SlimPajama"
 wandb_run_name = "SlimPajama-v1"  # Dial-EPOCH-1
@@ -117,7 +119,7 @@ def main():
         tokenizer_file=tokenizer_file,
         block_size=max_length,
         line_by_line=line_by_line,
-        save_cache=False,  # idk something weird was happening so i don't save it
+        save_cache=False,  # IDK something weird was happening, so I don't save it
     )
 
     if reload is True:
@@ -172,7 +174,7 @@ def main():
     # Generate text from it!
     ai.generate(
         10,
-        prompt=split_string,
+        prompt=prompt,
     )
 
 
