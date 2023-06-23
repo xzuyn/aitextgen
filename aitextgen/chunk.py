@@ -11,6 +11,7 @@ def token_chunk_split(
         config_file: str = "./trained_model/config.json",
         fasttokenizer: bool = True,
         resume_step: int = 0,
+        sanity_check: bool = False,
 ):
     """
     file_path: your text file.
@@ -43,6 +44,10 @@ def token_chunk_split(
     resume_step: set how many steps worth of data to remove from the beginning of your dataset
     (this happens in memory. your original dataset file will stay the same).
 
+    sanity_check: will load the first item of your message chunks, and print it out.
+    this is so you can double check if you are sending the trainer the correct formatting.
+    triple check this.
+
     The final output message chunks will be from these;
     {prefix}{split_string}{breaks_before_chunk}{chunks}{suffix}
     """
@@ -69,13 +74,19 @@ def token_chunk_split(
             from transformers import PreTrainedTokenizer
             tokenizer = PreTrainedTokenizer.from_pretrained(tokenizer_file,
                                                                 config=config_file)
-        for i in rechunked:
-            tokens = tokenizer.encode(i)
-            if len(tokens) <= trim_size:
-                rerechunked.append(i)
+        if sanity_check is True:
+            for i in rechunked:
+                tokens = tokenizer.encode(i)
+                if len(tokens) <= trim_size:
+                    rerechunked.append(i)
+                    ## Sanity check
+                    print(i)
+                    exit()
 
-                ## Sanity check
-                print(i)
-                exit()
+        elif sanity_check is False:
+            for i in rechunked:
+                tokens = tokenizer.encode(i)
+                if len(tokens) <= trim_size:
+                    rerechunked.append(i)
 
     return rerechunked
