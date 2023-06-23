@@ -290,10 +290,11 @@ class ATGProgressBar(ProgressBar):
             with open('Z:/aitextgen/trained_model/step.txt', 'r') as file:
                 stepped = int(file.read())
             with open("Z:/aitextgen/trained_model/step.txt", "w") as file:
-                if stepped > 0:
-                    file.write(str(self.steps + stepped))
-                else:
-                    file.write(str(self.steps))
+                file.write(str(self.steps))
+                # if stepped > 0:
+                #     file.write(str(self.steps + stepped))
+                # else:
+                #     file.write(str(self.steps))
 
     def average_loss(self, current_loss, prev_avg_loss, smoothing):
         if prev_avg_loss is None:
