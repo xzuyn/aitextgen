@@ -1,3 +1,35 @@
+# xzuyn fork
+- add train from scratch script
+- hackily add wandb logging (couldnt figure out how to do it with the logger parameter)
+- add a "better" way to load your dataset with a sanity check.
+- add a hacky way to resume training to the same part of the dataset.
+- 
+
+## sanity check
+I added a chunk.py, which loads the `token_chunk_split` function. It can be loaded with `from aitextgen.chunk import token_chunk_split`.
+
+These are the parameters you can set. Currently its mostly useful for txt files which are seperated by `<|endoftext|>` tokens, linebreaks, or some consistent beginning or end token sequence. It won't handle jsonl or csv or any of those yet.
+
+The sanity check part is when enabled, it will load the first item of your message chunks, and print it out. This is so you can double check if you are sending the trainer the correct formatting. Sorta slow if you are using a large dataset.
+
+**The final output message chunks will be from these; {prefix}{split_string}{breaks_before_chunk}{chunks}{suffix}**
+
+```
+file_path: your text file.
+trim: tokenize your text chunks then only keeps chunks that are trim_size or smaller.
+trim_size: should set this to your models `max_length`.
+split_string: what is seperating your text chunks currently? if its one thing on each line then using `\\n` will work. if you have something else like `<|thread|>` or `<|bos|>`, then use those instead.
+prefix: add a prefix to your message chunks (will be added before tokenizing).
+suffix: add a suffix to your message chunks (will be added before tokenizing).
+keep_split_string: when set to False your split string will be removed. so its probably best to keep this set to True.
+breaks_before_chunks: in between your `split_string` and text chunk you can add line breaks, or really any text if you would like.
+tokenizer_file: your models tokenizer file.
+config_file: your models config file.
+fasttokenizer: swap between using `PreTrainedTokenizerFast` & `PreTrainedTokenizer`
+resume_step: set how many steps worth of data to remove from the beginning of your dataset (this happens in memory. your original dataset file will stay the same).
+sanity_check: will load the first item of your message chunks, and print it out. this is so you can double check if you are sending the trainer the correct formatting. triple check this.
+```
+
 # aitextgen
 
 A robust Python tool for text-based AI training and generation using [OpenAI's](https://openai.com) [GPT-2](https://openai.com/blog/better-language-models/) and [EleutherAI's](https://www.eleuther.ai) [GPT Neo/GPT-3](https://github.com/EleutherAI/gpt-neo) architecture.
