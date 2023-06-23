@@ -21,15 +21,21 @@ n_head = 8  # default is 4
 line_by_line = False  # default is False
 learning_rate = 0.001  # default is 0.001
 dropout = 0.0  # default is 0.0
-split_string = "<|thread|>"
+split_string = "<|endoftext|>"
+keep_split_string = False
 trim = True
 fasttokenizer = True
-breaks_before_chunk = "\n\n"
+breaks_before_chunk = ""
+suffix = "<|endoftext|>"
+prefix = ""
 tokenizer_file = "./trained_model/tokenizer.json"
 config_file = "./trained_model/config.json"
 
 # this will load the first chunk of your dataset so can can see if it's using the correct format
-sanity_check = True
+# your model will not train with this enabled. it will not get saved either.
+# just enabled this to see what the trainer will see.
+sanity_check = False
+
 
 stepped = 0
 
@@ -40,11 +46,10 @@ stepped = 0
 #
 # file_name_with_bos = Your dataset WITH <|endoftext|> tokens.
 # file_name_no_bos = Your dataset WITHOUT <|endoftext|> tokens.
-file_name_with_bos = "./pol-700/3-processed/pol-new.txt"
-file_name_no_bos = "./pol-700/3-processed/pol-new-no-bos.txt"  # TODO: automatically
-# make this
-wandb_project_name = "Pol"
-wandb_run_name = "Pol-v2.2"  # Dial-EPOCH-1
+file_name_with_bos = "./trained_model/dataset/combined_with_bos.txt"
+file_name_no_bos = "./trained_model/dataset/combined_no_bos.txt"  # TODO: make this automatic
+wandb_project_name = "SlimPajama"
+wandb_run_name = "SlimPajama-v1"  # Dial-EPOCH-1
 
 
 # Your code needs to be wrapped inside a main function,
@@ -103,13 +108,16 @@ def main():
         fasttokenizer=fasttokenizer,
         resume_step=stepped,
         sanity_check=sanity_check,
+        suffix=suffix,
+        prefix=prefix,
+        keep_split_string=keep_split_string,
     )
     data = TokenDataset(
         texts=t_list,
         tokenizer_file=tokenizer_file,
         block_size=max_length,
         line_by_line=line_by_line,
-        save_cache=False,
+        save_cache=False,  # idk something weird was happening so i don't save it
     )
 
     if reload is True:
@@ -162,7 +170,10 @@ def main():
     wandb.finish()
 
     # Generate text from it!
-    ai.generate(10, prompt=split_string)
+    ai.generate(
+        10,
+        prompt=split_string,
+    )
 
 
 if __name__ == "__main__":
