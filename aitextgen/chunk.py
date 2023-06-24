@@ -11,6 +11,10 @@ def token_chunk_split(
         config_file: str = "./trained_model/config.json",
         fasttokenizer: bool = True,
         resume_step: int = 0,
+        # multiple_sets: bool = False,  # TODO
+        # multiple_sets_amount: int = 2,  # TODO
+        # randomize_sets: bool = False,  # TODO
+        # randomize_before_merge: bool = False,  # TODO
         sanity_check: bool = False,
 ):
     """
@@ -36,7 +40,10 @@ def token_chunk_split(
         content = file.read()
 
     chunks = content.split(split_string)
+    content = None
     message_chunks = [chunk.strip() for chunk in chunks if chunk.strip()]
+    chunks = None
+    
 
     rechunked = []
     if keep_split_string is True:
@@ -58,7 +65,7 @@ def token_chunk_split(
             from transformers import PreTrainedTokenizer
             tokenizer = PreTrainedTokenizer.from_pretrained(tokenizer_file,
                                                                 config=config_file)
-        if sanity_check is True:
+        if sanity_check is True:  # TODO: add more to this
             for i in rechunked:
                 tokens = tokenizer.encode(i)
                 if len(tokens) <= trim_size:
