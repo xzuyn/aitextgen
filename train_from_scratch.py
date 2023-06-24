@@ -10,14 +10,14 @@ from aitextgen.tokenizers import train_tokenizer
 
 
 batch_size = 1  # high batch size gives worse training(?), but is used to speed up training time
-max_length = 1024  # default is 64
+max_length = 64  # default is 64
 epochs = 4  # default is 1
-save_every = 250  # default is 5000
-generate_every = 10  # default is 500
-vocab_size = 8192  # default is (1024 * 1)
-n_embed = 512  # default is 128
-n_layer = 8  # default is 4
-n_head = 8  # default is 4
+save_every = 5000  # default is 5000
+generate_every = 500  # default is 500
+vocab_size = (1024 * 1)  # default is (1024 * 1)
+n_embed = 128  # default is 128
+n_layer = 4  # default is 4
+n_head = 4  # default is 4
 line_by_line = False  # default is False
 learning_rate = 0.001  # default is 0.001
 dropout = 0.0  # default is 0.0
@@ -30,9 +30,11 @@ suffix = "<|endoftext|>"
 prefix = ""
 tokenizer_file = "./trained_model/tokenizer.json"
 config_file = "./trained_model/config.json"
+vocab_file = "./trained_model/vocab.json"
 prompt = "USER: "
+wandb_update_rate = 5  # number of steps until sending loss info to wandb. currently does nothing
 
-# this will load the first chunk of your dataset so can can see if it's using the correct format
+# this will load the first chunk of your dataset so can can see if it's using the correct format.
 # your model will not train with this enabled. it will not get saved either.
 # just enabled this to see what the trainer will see.
 sanity_check = False
@@ -47,11 +49,10 @@ stepped = 0
 #
 # file_name_with_bos = Your dataset WITH <|endoftext|> tokens.
 # file_name_no_bos = Your dataset WITHOUT <|endoftext|> tokens.
-file_name_with_bos = "./trained_model/dataset/combined_with_bos.txt"
-
-file_name_no_bos = "./trained_model/dataset/combined_no_bos.txt"  # TODO: make this automatic
-wandb_project_name = "SlimPajama"
-wandb_run_name = "SlimPajama-v1"  # Dial-EPOCH-1
+file_name_with_bos = "./Datasets/SlimPajamaTestSet.txt"
+file_name_no_bos = "./Datasets/SlimPajamaTestSet-no-bos.txt"  # TODO: make this automatic
+wandb_project_name = "SlimPajamaTestSet"
+wandb_run_name = "SlimPajamaTestSet"  # Dial-EPOCH-1
 
 
 # Your code needs to be wrapped inside a main function,
@@ -127,13 +128,13 @@ def main():
             model_folder="./trained_model",
             config=config_file,
             tokenizer_file=tokenizer_file,
-            vocab_file="./trained_model/vocab.json",
+            vocab_file=vocab_file,
         )
     else:
         ai = aitextgen(
             config=config,
             tokenizer_file=tokenizer_file,
-            vocab_file="./trained_model/vocab.json",
+            vocab_file=vocab_file,
         )
 
     print()
