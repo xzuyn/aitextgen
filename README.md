@@ -3,7 +3,6 @@
 - hackily add wandb logging (couldnt figure out how to do it with the logger parameter)
 - add a "better" way to load your dataset with a sanity check.
 - add a hacky way to resume training to the same part of the dataset.
-- 
 
 ## sanity check
 I added a chunk.py, which loads the `token_chunk_split` function. It can be loaded with `from aitextgen.chunk import token_chunk_split`.
