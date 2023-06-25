@@ -38,12 +38,11 @@ def token_chunk_split(
     global rerechunked, tokenizer
     with open(file_path, 'r', encoding='utf-8') as file:
         content = file.read()
-
-    chunks = content.split(split_string)
+        chunks = content.split(split_string)
     content = None
+
     message_chunks = [chunk.strip() for chunk in chunks if chunk.strip()]
     chunks = None
-
 
     rechunked = []
     if keep_split_string is True:
@@ -52,6 +51,7 @@ def token_chunk_split(
     elif keep_split_string is False:
         for chunks in message_chunks:
             rechunked.append(f"{prefix}{breaks_before_chunk}{chunks}{suffix}")
+    message_chunks = None
 
     rechunked = rechunked[resume_step:]
 
@@ -81,6 +81,8 @@ def token_chunk_split(
                 tokens = tokenizer.encode(i)
                 if len(tokens) <= trim_size:
                     rerechunked.append(i)
+        tokens = None
+        rechunked = None
 
     return rerechunked
 
@@ -104,12 +106,15 @@ def plaintext_slider(
     with open(file_path, 'r', encoding='utf-8') as file:
         content = file.read()
         tokens_list = tokenizer.encode(content)
+        content = None
 
     grouped_tokens = []
     for i in range(0, len(tokens_list) - (size - 1)):
         group = tokens_list[i:i + size]
         grouped_tokens.append(group)
+    group = None
+    tokens_list = None
 
     plaintext_list = [tokenizer.decode(tokens) for tokens in grouped_tokens]
-
+    grouped_tokens = None
     return plaintext_list
