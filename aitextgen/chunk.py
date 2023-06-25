@@ -43,7 +43,7 @@ def token_chunk_split(
     content = None
     message_chunks = [chunk.strip() for chunk in chunks if chunk.strip()]
     chunks = None
-    
+
 
     rechunked = []
     if keep_split_string is True:
@@ -83,3 +83,33 @@ def token_chunk_split(
                     rerechunked.append(i)
 
     return rerechunked
+
+
+def plaintext_slider(
+        file_path,
+        size,
+        tokenizer_file: str = "./trained_model/tokenizer.json",
+        config_file: str = "./trained_model/config.json",
+        fasttokenizer: bool = True,
+):
+    if fasttokenizer is True:
+        from transformers import PreTrainedTokenizerFast
+        tokenizer = PreTrainedTokenizerFast.from_pretrained(tokenizer_file,
+                                                            config=config_file)
+    elif fasttokenizer is False:
+        from transformers import PreTrainedTokenizer
+        tokenizer = PreTrainedTokenizer.from_pretrained(tokenizer_file,
+                                                        config=config_file)
+
+    with open(file_path, 'r', encoding='utf-8') as file:
+        content = file.read()
+        tokens_list = tokenizer.encode(content)
+
+    grouped_tokens = []
+    for i in range(0, len(tokens_list) - (size - 1)):
+        group = tokens_list[i:i + size]
+        grouped_tokens.append(group)
+
+    plaintext_list = [tokenizer.decode(tokens) for tokens in grouped_tokens]
+
+    return plaintext_list
