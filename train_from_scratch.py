@@ -5,13 +5,14 @@ from math import floor
 from aitextgen import aitextgen
 from aitextgen.utils import GPT2ConfigCPU
 from aitextgen.chunk import token_chunk_split
+from aitextgen.chunk import plaintext_slider
 from aitextgen.TokenDataset import TokenDataset
 from aitextgen.tokenizers import train_tokenizer
 
 
 batch_size = 1  # high batch size gives worse training(?), but is used to speed up training time
 max_length = 64  # default is 64
-epochs = 4  # default is 1
+epochs = 1  # default is 1
 save_every = 5000  # default is 5000
 generate_every = 500  # default is 500
 vocab_size = (1024 * 1)  # default is (1024 * 1)
@@ -31,7 +32,7 @@ prefix = ""
 tokenizer_file = "./trained_model/tokenizer.json"
 config_file = "./trained_model/config.json"
 vocab_file = "./trained_model/vocab.json"
-prompt = "USER: "
+prompt = ""
 wandb_update_rate = 5  # number of steps until sending loss info to wandb. currently does nothing
 
 # this will load the first chunk of your dataset so can can see if it's using the correct format.
@@ -100,20 +101,12 @@ def main():
         dropout=dropout,
         learning_rate=learning_rate,
     )
-    t_list = token_chunk_split(
-        file_name_with_bos,
-        trim=trim,
-        trim_size=max_length,
-        split_string=split_string,
+    t_list = plaintext_slider(
+        file_path=file_name_with_bos,
+        size=max_length,
         tokenizer_file=tokenizer_file,
         config_file=config_file,
-        breaks_before_chunk=breaks_before_chunk,
         fasttokenizer=fasttokenizer,
-        resume_step=stepped,
-        sanity_check=sanity_check,
-        suffix=suffix,
-        prefix=prefix,
-        keep_split_string=keep_split_string,
     )
     data = TokenDataset(
         texts=t_list,
