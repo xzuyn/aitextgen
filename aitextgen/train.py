@@ -13,8 +13,8 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks.progress.progress_bar import ProgressBar
 from pytorch_lightning.accelerators import TPUAccelerator
 
-import wandb
-from wandb import AlertLevel
+# import wandb
+# from wandb import AlertLevel
 from datetime import timedelta
 
 
@@ -192,22 +192,22 @@ class ATGProgressBar(ProgressBar):
             self.main_progress_bar.set_description(desc)
 
         # Log the loss using Weights & Biases (step 0)
-        if (self.steps % 5 == 0) or (self.steps == 1):
-            tokens_processed = 1024 * self.steps # TODO: replace 1024 with `max_length`
-            tokens_to_chinchilla = (29900000 * 20) - tokens_processed # TODO: replace 29900000 with
-            # models parameter count
-            tokens_to_llama = (29900000 * 40) - tokens_processed # TODO: replace 29900000 with
-            # models parameter count
-            wandb.log(
-                {
-                    "loss": current_loss,
-                    "avg_loss": avg_loss,
-                    "tokens_processed": tokens_processed,
-                    "tokens_to_chinchilla": tokens_to_chinchilla,
-                    "tokens_to_llama": tokens_to_llama,
-                },
-                step=self.steps
-            )
+        # if (self.steps % 5 == 0) or (self.steps == 1):
+        #     tokens_processed = 1024 * self.steps # TODO: replace 1024 with `max_length`
+        #     tokens_to_chinchilla = (29900000 * 20) - tokens_processed # TODO: replace 29900000 with
+        #     # models parameter count
+        #     tokens_to_llama = (29900000 * 40) - tokens_processed # TODO: replace 29900000 with
+        #     # models parameter count
+        #     wandb.log(
+        #         {
+        #             "loss": current_loss,
+        #             "avg_loss": avg_loss,
+        #             "tokens_processed": tokens_processed,
+        #             "tokens_to_chinchilla": tokens_to_chinchilla,
+        #             "tokens_to_llama": tokens_to_llama,
+        #         },
+        #         step=self.steps
+        #     )
 
         if TPUAccelerator.is_available() and self.save_every_check:
             did_unfreeze = False
