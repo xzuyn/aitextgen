@@ -22,6 +22,8 @@ n_head = 4  # default is 4
 line_by_line = False  # default is False
 learning_rate = 0.001  # default is 0.001
 dropout = 0.0  # default is 0.0
+use_gpu = True
+use_fp16 = True
 split_string = "<|endoftext|>"
 keep_split_string = False
 trim = True
@@ -33,7 +35,7 @@ tokenizer_file = "./trained_model/tokenizer.json"
 config_file = "./trained_model/config.json"
 vocab_file = "./trained_model/vocab.json"
 prompt = ""
-wandb_update_rate = 5  # number of steps until sending loss info to wandb. currently does nothing
+# wandb_update_rate = 5  # number of steps until sending loss info to wandb. currently does nothing
 
 # this will load the first chunk of your dataset so can can see if it's using the correct format.
 # your model will not train with this enabled. it will not get saved either.
@@ -50,10 +52,10 @@ stepped = 0
 #
 # file_name_with_bos = Your dataset WITH <|endoftext|> tokens.
 # file_name_no_bos = Your dataset WITHOUT <|endoftext|> tokens.
-file_name_with_bos = "./Datasets/SlimPajamaTestSet.txt"
-file_name_no_bos = "./Datasets/SlimPajamaTestSet-no-bos.txt"  # TODO: make this automatic
-wandb_project_name = "SlimPajamaTestSet"
-wandb_run_name = "SlimPajamaTestSet"  # Dial-EPOCH-1
+file_name_with_bos = "./Datasets/input.txt"
+file_name_no_bos = "./Datasets/input.txt"  # TODO: make this automatic
+# wandb_project_name = "tiny shakespeare"
+# wandb_run_name = "tiny shakespeare"
 
 
 # Your code needs to be wrapped inside a main function,
@@ -122,6 +124,7 @@ def main():
             config=config_file,
             tokenizer_file=tokenizer_file,
             vocab_file=vocab_file,
+            to_gpu=use_gpu,
         )
     else:
         ai = aitextgen(
@@ -161,6 +164,7 @@ def main():
         save_every=save_every,
         generate_every=generate_every,
         learning_rate=learning_rate,
+        fp16=use_fp16,
     )
 
     # wandb.finish()
@@ -169,6 +173,7 @@ def main():
     ai.generate(
         10,
         prompt=prompt,
+        to_gpu=use_gpu,
     )
 
 
