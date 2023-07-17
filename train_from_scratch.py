@@ -1,5 +1,5 @@
 import os
-import wandb
+# import wandb
 import logging
 from math import floor
 from aitextgen import aitextgen
@@ -138,19 +138,19 @@ def main():
     print()
 
     # Initialize Weights & Biases
-    wandb.init(
-        project=wandb_project_name,
-        config={
-            "learning_rate": learning_rate,
-            "batch_size": batch_size,
-            "max_length": max_length,
-            "n_embed": n_embed,
-            "n_layer": n_layer,
-            "n_head": n_head,
-            "dropout": dropout,
-            "vocab_size": vocab_size,
-        }
-    )
+    # wandb.init(
+    #     project=wandb_project_name,
+    #     config={
+    #         "learning_rate": learning_rate,
+    #         "batch_size": batch_size,
+    #         "max_length": max_length,
+    #         "n_embed": n_embed,
+    #         "n_layer": n_layer,
+    #         "n_head": n_head,
+    #         "dropout": dropout,
+    #         "vocab_size": vocab_size,
+    #     }
+    # )
 
     # Train the model! It will save pytorch_model.bin periodically and after completion to the
     # `trained_model` folder.
@@ -163,7 +163,7 @@ def main():
         learning_rate=learning_rate,
     )
 
-    wandb.finish()
+    # wandb.finish()
 
     # Generate text from it!
     ai.generate(
